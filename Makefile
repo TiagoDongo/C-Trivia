@@ -1,43 +1,57 @@
 # Makefile para o projeto C-Trivia
 # Makefile responsavel por construir o executável do quiz a partir dos fontes em `src/`.
 
-#caminho para todos  os   .c's na oasta src
-SRC = src/*.c
-
-# Flags de inclusão para o compilador (diretórios com headers)
-#faz inclusão  de todos  os headers na pasta libs
+# Caminhos
+SRC = src
+BUILD = build
+TEST = test
 INCLUDES = -Ilibs
 
-# Caminho do executável gerado
-EXE = build/quiz
+# Caminho dos executáveis
+EXE = $(BUILD)/quiz
+TESTS = $(BUILD)/quizTests
 
-# Marca `run` como alvo não relacionado a arquivo
-.PHONY: run
+.PHONY: help dirs run
 
-# Alvo padrão para gerar o executável.
-#Dependencias:
-# Depende de todos os arquivos fonte encontrados por `wildcard $(SRC)`.
-#depende dos  diretorios criados  pelo  comando dirs
-$(EXE): dirs $(wildcard $(SRC))
-	gcc -o $(EXE) $(SRC) $(INCLUDES)
+dirs:
+	@mkdir -p build data
 
-run: $(EXE)
+# --- Criação de diretórios ---
+$(EXE): $(BUILD)/main.o $(BUILD)/quiz.o $(BUILD)/util.o
+	gcc -o $(EXE) $(BUILD)/main.o $(BUILD)/quiz.o $(BUILD)/util.o
+
+# --- Executável de testes ---
+$(TESTS): $(BUILD)/tests.o $(BUILD)/quiz.o $(BUILD)/util.o
+	gcc -o $(TESTS) $(BUILD)/tests.o $(BUILD)/quiz.o $(BUILD)/util.o 
+
+# --- Objetos ---
+$(BUILD)/main.o: $(SRC)/main.c
+	gcc -g -c $(SRC)/main.c $(INCLUDES) -o $(BUILD)/main.o
+
+$(BUILD)/quiz.o: $(SRC)/quiz.c
+	gcc -g -c $(SRC)/quiz.c $(INCLUDES) -o $(BUILD)/quiz.o
+
+$(BUILD)/util.o: $(SRC)/util.c
+	gcc -g -c $(SRC)/util.c $(INCLUDES) -o $(BUILD)/util.o
+
+$(BUILD)/tests.o: $(TEST)/tests.c
+	gcc -g -c $(TEST)/tests.c $(INCLUDES) -o $(BUILD)/tests.o
+
+# --- Rodar executáveis
+run:$(EXE)
 	./$(EXE)
 
-#comando  respensavel por criar os diretorios
-dirs:
-	mkdir build data
+tests:$(TESTS)
+	./$(TESTS)
 
 help:
+	@echo "WELCOME TO  C-TRIVIA"
 	@echo "Available targets:"
 	@echo "  make        - build the executable"
 	@echo "  make run    - run the quiz"
+	@echo "  make tests    - run the tests"
+	@echo "  make dirs    - create build and data directories"
 	@echo "  make help   - show this help message"
-	@echo "  make welcome- show a short welcome and quick instructions"
 	@echo ""
 	@echo "On Windows using MinGW/MSYS you may need to run 'mingw32-make help'."
 
-welcome:
-	@echo "Welcome to C-Trivia!"
-	@echo "To see available commands run: make help"
-	@echo "On Windows with MinGW, use: mingw32-make help"

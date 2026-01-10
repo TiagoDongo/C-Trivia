@@ -74,10 +74,10 @@ QuestionNode *createQuestion(char *question, char *options[4], char correctAnswe
 
 void addNewQuestion(QuestionList *qList, QuestionNode *question){
     if (!qList || !question){
-        return NULL;
+        return;
     }
 
-    if (emptyQuestionList(qList)){
+    if (emptyQuestionList(*qList)){
         *qList = question;
         question->next = NULL;
         return;

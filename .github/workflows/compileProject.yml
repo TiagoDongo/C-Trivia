@@ -25,12 +25,20 @@ jobs:
             exit 1
           else
             echo "SUCCESS: Makefile found"
-            echo "Makefile content (first 25 lines):"  # <-- CORREÇÃO: "Makefile" (não "Makefike")
+            echo "Makefile content (first 25 lines):"
             head -25 Makefile
           fi
 
+      - name: Create Directories
+        run: make dirs
+
       - name: Build (run Makefile)
         run: make
+
+      - name: Run Tests
+        run: |
+          set -e
+          make tests
 
       - name: List build folder
         run: ls -la build || true
