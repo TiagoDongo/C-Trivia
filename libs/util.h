@@ -8,6 +8,8 @@
 
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include<ctype.h>
 
 int validateInt(const char *prompt);
 int validateString(const char *prompt, char *destination, int maxLenght);
