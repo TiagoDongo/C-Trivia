@@ -128,3 +128,19 @@ int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove){
         return 0;
     }
 }
+void arvorePlayer(Player **root){
+    *root = NULL;
+}
+Player *createPlayerTree( const char* nome, int score){
+    Player *newPlayer = (Player*)malloc(sizeof(Player));
+    if (newPlayer ==NULL )
+    {
+        return NULL;
+        /* code */
+    }
+    strcpy(newPlayer->playerName,nome);
+    newPlayer->score=score;
+    newPlayer->left = NULL;
+    newPlayer->right = NULL;
+    return newPlayer;
+}

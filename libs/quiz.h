@@ -32,6 +32,12 @@ typedef struct player {
     struct player *right;      ///< Ponteiro para subárvore direita (nomes maiores)
 } Player;
 
+void arvoraPlayer(Player **root);
+
+
+Player *createPlayerTree( const char* nome, int score)
+
+
 /**
  * @brief estrututa de dados responsavel por armazenar uma lista de perguntas
  
@@ -47,6 +53,7 @@ typedef struct questionNode{
     char correctAnswer;
     struct questionNode *next;
 }QuestionNode;
+
 
 /**
  * @brief Tipo para representar uma lista de questões
