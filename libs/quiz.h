@@ -8,7 +8,6 @@
  * - Lista ligada de questões
  * - Funções de manipulação de dados
  */
-
 #ifndef QUIZ_H_INCLUDED
 #define QUIZ_H_INCLUDED
 
@@ -16,6 +15,8 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
+
+//========================= ESTRUTURAS DE DADOS ========================================
 
 /**
  * @brief Estrutura que de dados responsavel por armazenar os jogadores
@@ -26,10 +27,10 @@
  * @param *right ponteiro para o nó filho direito
  */
 typedef struct player {
-    char playerName[100];      ///< Nome do jogador (máx. 99 caracteres + '\0')
-    int score;                 ///< Pontuação atual do jogador
-    struct player *left;       ///< Ponteiro para subárvore esquerda (nomes menores)
-    struct player *right;      ///< Ponteiro para subárvore direita (nomes maiores)
+    char playerName[100];      
+    int score;                 
+    struct player *left;       
+    struct player *right;      
 } Player;
 
 /**
@@ -53,32 +54,34 @@ typedef struct questionNode{
  */
 typedef QuestionNode *QuestionList;
 
+//========================= fUNÇÕES DO SISTEMA ========================================
+
 /**
  * @brief Função que imprime o menu principal do sistema
  */
-void menu();
+void menu(QuestionList *list);
 
-// question functions
+//========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
 
 /**
  * @brief Inicializa uma lista de questões como vazia
- * @param qlist Ponteiro para a lista a ser inicializada
+ * @param list Ponteiro para a lista a ser inicializada
  */
-void createQuestionList(QuestionList *qlist); 
+void createQuestionList(QuestionList *list); 
 
 /**
  * @brief Verifica se uma lista de questões está vazia
- * @param qList Lista de questões a verificar
+ * @param list Lista de questões a verificar
  * @return 1 se vazia, 0 se não
  */
-int emptyQuestionList(QuestionList qList);
+int emptyQuestionList(QuestionList list);
 
 /**
  * @brief Adiciona uma questão ao final da lista
- * @param qList Ponteiro para a lista
+ * @param list Ponteiro para a lista
  * @param question Questão a adicionar
  */
-void  addNewQuestion(QuestionList *qList, QuestionNode *question);
+void  addNewQuestion(QuestionList *list, QuestionNode *question);
 
 /**
  * @brief Cria uma nova questão
@@ -91,10 +94,38 @@ QuestionNode *createQuestion(char *question, char *options[4], char correctAnswe
 
 /**
  * @brief Remove uma questão da lista
- * @param qList Ponteiro para a lista
+ * @param list Ponteiro para a lista
  * @param questionToRemove Questão a remover
  * @return `1` se sucesso, `0` se erro
  */
-int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove);
+int removeQuestion(QuestionList *list, QuestionNode *questionToRemove);
 
+/**
+ * @brief Mostra todas as  questões da lista, com suas opções e resposta correta
+ */
+void showAllQuestions(QuestionList list);
+
+/**
+ * @brief Liberta toda a memoria alocada para a lista
+ * @param *list ponteiro para a lista
+ */
+void freeQuestionList(QuestionList *list);
+
+/**
+ * @brief Remove uma questão da lista pela posição (0 = primeira)
+ * @param list Ponteiro para a lista
+ * @param questionPosition Posição da questão a remover
+ * @return 1 se sucesso, 0 se posição inválida ou lista vazia
+ */
+int removeQuestionByPosition(QuestionList *list, int questionPosition);
+
+//========================= FUNÇÕES DE MANIPULAÇÃO DE PLAYERS ========================================
+
+//funções de players pera colocar aqui
+
+//========================= FUNÇÕES DE MANIPULAÇÃO DE FICHEIROS ========================================
+
+void saveQuestionList(QuestionList list);
+
+void loadQuestionList(QuestionList *list);
 #endif

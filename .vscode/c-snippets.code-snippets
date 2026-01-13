@@ -2,11 +2,6 @@
   "Header Guard": {
     "prefix": "ch",
     "body": [
-        "/*",
-        "-> File Description",
-        "-> ",
-        "*/",
-        "",
         "#ifndef ${TM_FILENAME/(.*)\\.h$/${1:/upcase}/}_H_INCLUDED",
         "#define ${TM_FILENAME/(.*)\\.h$/${1:/upcase}/}_H_INCLUDED",
         "",
