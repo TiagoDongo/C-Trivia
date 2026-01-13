@@ -137,24 +137,37 @@ void testRemoveQuestionByPosition() {
     QuestionList qList;
     createQuestionList(&qList);
 
-    QuestionNode *q1 = createQuestion("P1", (char*[]){"A","B","C","D"}, 'A');
-    QuestionNode *q2 = createQuestion("P2", (char*[]){"A","B","C","D"}, 'B');
+    char *q1Opts[] = {
+        strdup("Praia de Santa Maria"),
+        strdup("Cidade Velha"),
+        strdup("Mindelo"),
+        strdup("Sal Rei")
+    };
+    QuestionNode *q1 = createQuestion(strdup("Qual e a capital turistica de Cabo Verde?"), q1Opts, 'A');
+    
+    char *q2Opts[] = {
+        strdup("Amapa"),
+        strdup("Cabo Verde"),
+        strdup("Moçambique"),
+        strdup("Angola")
+    };
+    QuestionNode *q2 = createQuestion(strdup("Qual destes paises e um arquipelago africano?"), q2Opts, 'B');
 
     addNewQuestion(&qList, q1);
     addNewQuestion(&qList, q2);
 
     printf("\n-Teste removeQuestionByPosition:\n");
 
-    // remover no do final
-    printf("-> Remover no final (q2): ");
+    // remover no do final (posição 2)
+    printf("-> Remover no final (posicao 2): ");
     if (removeQuestionByPosition(&qList, 2) && q1->next == NULL) {
         printf("[PASS]: no final removido corretamente\n");
     } else {
         printf("[FAIL]: falha ao remover no final\n");
     }
 
-    // remover no do inicio
-    printf("-> Remover no inicio (q1): ");
+    // remover no do inicio (posição 1)
+    printf("-> Remover no inicio (posicao 1): ");
     if (removeQuestionByPosition(&qList, 1) && emptyQuestionList(qList)) {
         printf("[PASS]: no inicio removido corretamente, lista vazia\n");
     } else {
@@ -162,7 +175,7 @@ void testRemoveQuestionByPosition() {
     }
 
     // tentar remover no inexistente
-    printf("-> Remover no inexistente (q1 novamente): ");
+    printf("-> Remover no inexistente (posicao 1 novamente): ");
     if (!removeQuestionByPosition(&qList, 1)) {
         printf("[PASS]: retorno 0 ao tentar remover no inexistente\n");
     } else {
