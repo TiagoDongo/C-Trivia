@@ -128,3 +128,138 @@ int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove){
         return 0;
     }
 }
+
+void showAllQuestions(QuestionList list){
+    if(emptyQuestionList(list)){
+        printf("ERRO: lista esta vazia.\n");
+        return;
+    }
+
+    int i = 1;
+    QuestionList currentNode = list;
+    printf("\n====== LISTA DE QUESTOES ======\n");
+    while (currentNode != NULL){
+        printf("- Questao %d: %s\n",i,currentNode->question);
+        for(int j = 0; j < 4;  j++){
+            printf("  %c) %s\n", 'A'+j,  currentNode->options[j]);
+        }
+        printf("Resposta correta: %c\n", currentNode->correctAnswer);
+        currentNode = currentNode->next;
+        i++;
+    }
+    printf("\n====== FIM DA LISTA DE QUESTOES ======\n\n");
+}
+
+void freeQuestionList(QuestionList *list) {
+    QuestionNode *current = *list;
+    while (current != NULL) {
+        QuestionNode *next = current->next;
+
+        free(current->question);
+        for (int i = 0; i < 4; i++) {
+            free(current->options[i]);
+        }
+        free(current);
+
+        current = next;
+    }
+    *list = NULL;
+}
+
+int removeQuestionByPosition(QuestionList *list, int questionPosition){
+    if(emptyQuestionList(*list))  return 0;
+
+    QuestionList ql = *list;
+    int n = 1;
+
+    if(questionPosition == 1){
+        *list = ql->next;
+        for (int i = 0; i < 4; i++){
+            free(ql->options[i]);
+        }
+        free(ql->question);
+        free(ql);
+        return 1;
+    }
+
+    while (ql != NULL && n <  questionPosition-1){
+        ql =  ql->next;
+        n++;
+    }
+
+    if(ql == NULL || ql->next == NULL) return 0;
+
+    QuestionList  qR = ql->next;
+    ql->next = qR->next;
+    for(int i = 0; i < 4; i++){
+        free(qR->options[i]);
+    }
+    free(qR->question);
+    free(qR);
+    return 1;    
+}
+
+//========================= FILE FUNCTIONS ========================================
+
+void saveQuestionList(QuestionList qlist){
+  FILE *file = fopen("data/ListOfQuestions.txt", "w");
+  if(file ==  NULL){
+    printf("ERRO: nao foi possivel abrir o ficheiro");
+    return;
+  }
+
+  QuestionList l  = qlist;
+  while (l  != NULL){
+    fprintf(file, "%s\n", l->question);
+
+    for(int i = 0; i<4; i++){
+      fprintf(file, "%s\n", l->options[i]);
+    }
+
+    fprintf(file,  "%c\n", l->correctAnswer);
+    l  = l->next;
+  }
+  fclose(file);
+  printf("SUCESSO: lista de  perguntas guardada em data/\n");
+}
+
+void loadQuestionList(QuestionList *qlist){
+  FILE  *file = fopen("data/ListOfQuestions.txt", "r");
+  if(file ==  NULL){
+    printf("ERRO: nao foi possivel abrir  o ficheiro");
+    return;
+  }
+
+  createQuestionList(qlist);
+
+  char qQuestion[256];
+  char qOptions[4][100];
+  char qAnswer;
+  char buffer[10];
+
+  while (fgets(qQuestion, sizeof(qQuestion), file)){
+    qQuestion[strcspn(qQuestion, "\n")] = '\0';
+
+    for(int i = 0; i < 4; i++){
+      if(!fgets(qOptions[i], sizeof(qOptions[i]), file)) break;
+      qOptions[i][strcspn(qOptions[i], "\n")] = '\0';
+    }
+
+    if(!fgets(buffer,  sizeof(buffer), file)) break;
+    qAnswer = toupper(buffer[0]);
+
+    char *questionCpy = malloc(strlen(qQuestion) + 1);
+    strcpy(questionCpy,qQuestion);
+
+    char *opt[4];
+    for (int i = 0; i < 4; i++){
+      opt[i] = malloc(strlen(qOptions[i]) + 1);
+      strcpy(opt[i], qOptions[i]);
+    }
+
+    QuestionNode *q = createQuestion(questionCpy,  opt, qAnswer);
+    addNewQuestion(qlist, q);
+  }
+  fclose(file);
+  printf("SUCESSO: lista de perguntas carregada de data/\n");
+}

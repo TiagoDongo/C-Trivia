@@ -17,6 +17,8 @@
 #include<string.h>
 #include<ctype.h>
 
+//========================= ESTRUTURAS DE DADOS ========================================
+
 /**
  * @brief Estrutura que de dados responsavel por armazenar os jogadores
  * 
@@ -53,12 +55,18 @@ typedef struct questionNode{
  */
 typedef QuestionNode *QuestionList;
 
+//========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
+
 /**
  * @brief Função que imprime o menu principal do sistema
  */
 void menu();
 
-// question functions
+//========================= FUNÇÕES DE MANIPULAÇÃO DE PLAYERS ======================================
+
+// colocar as funções do  player aqui
+
+//========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
 
 /**
  * @brief Inicializa uma lista de questões como vazia
@@ -96,5 +104,30 @@ QuestionNode *createQuestion(char *question, char *options[4], char correctAnswe
  * @return `1` se sucesso, `0` se erro
  */
 int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove);
+
+/**
+ * @brief Mostra todas as  questões da lista, com suas opções e resposta correta
+ */
+void showAllQuestions(QuestionList qlist);
+
+/**
+ * @brief Liberta toda a memoria alocada para a lista
+ * @param *list ponteiro para a lista
+ */
+void freeQuestionList(QuestionList *qlist);
+
+/**
+ * @brief Remove uma questão da lista pela posição (0 = primeira)
+ * @param qlist Ponteiro para a lista
+ * @param questionPosition Posição da questão a remover
+ * @return 1 se sucesso, 0 se posição inválida ou lista vazia
+ */
+int removeQuestionByPosition(QuestionList *qlist, int questionPosition);
+
+//========================= FUNÇÕES DE MANIPULAÇÃO DE FICHEIROS ========================================
+
+void saveQuestionList(QuestionList qlist);
+
+void loadQuestionList(QuestionList *qlist);
 
 #endif
