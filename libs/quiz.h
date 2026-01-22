@@ -16,6 +16,7 @@
 #include<stdlib.h>
 #include<string.h>
 #include<ctype.h>
+#include<locale.h>
 
 //========================= ESTRUTURAS DE DADOS ========================================
 
@@ -28,10 +29,10 @@
  * @param *right ponteiro para o nó filho direito
  */
 typedef struct player {
-    char playerName[100];      ///< Nome do jogador (máx. 99 caracteres + '\0')
-    int score;                 ///< Pontuação atual do jogador
-    struct player *left;       ///< Ponteiro para subárvore esquerda (nomes menores)
-    struct player *right;      ///< Ponteiro para subárvore direita (nomes maiores)
+    char playerName[100];      
+    int score;                 
+    struct player *left;       
+    struct player *right;      
 } Player;
 
 /**
@@ -64,7 +65,38 @@ void menu();
 
 //========================= FUNÇÕES DE MANIPULAÇÃO DE PLAYERS ======================================
 
-// colocar as funções do  player aqui
+/**
+ * @brief Cria e inicializa um novo nó para a árvore de jogadores
+ * 
+ * Aloca dinamicamente memória para uma estrutura Player e inicializa
+ * todos os seus campos com valores padrão. Este nó pode ser usado como
+ * raiz da árvore ou como nó intermediário.
+ * 
+ * @returns Ponteiro para o novo nó Player inicializado 
+ */
+Player* createPlayerTreeNode();
+
+/**
+ * @brief Adiciona um novo jogador à árvore binária de pesquisa ordenada por nome
+ * 
+ * Insere um novo nó mantendo a ordem alfabética crescente dos nomes dos jogadores.
+ * Se a árvore estiver vazia, o novo nó torna-se a raiz.
+ * 
+ * @param tree Ponteiro duplo para a raiz da árvore. 
+ * @param playerName Nome do jogador (máx. 99 caracteres + terminador nulo).
+ * @param score Pontuação inicial do jogador (inteiro, típico: 0-100).
+ * 
+ * @note Complexidade: O(log n) em árvore balanceada, O(n) no pior caso
+ * @warning A função não previne nomes duplicados na árvore
+ */
+void addPlayerIntoTree(Player** tree,char playerName[100], int score); 
+
+/**
+ * @brief Remove o no que contem informacoes do jogador na arvore
+ * @param tree Ponteiro duplo para a raiz da árvore. 
+ * @param playerName Nome do jogador (máx. 99 caracteres + terminador nulo).
+ */
+int removePlayerFromTree(Player** tree,char* playerName); 
 
 //========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
 

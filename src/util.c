@@ -1,10 +1,5 @@
 #include"util.h"
 
-/**
- * @brief Lê e faz validação de inteiros não-negativos da entrada do usuario
- * @param prompt uma string constante com a mensagem do usuario
- * @return valor inteiro digitado e validado do usuario
- */
 int validateInt(const char *prompt){
     /*
     valueInput - armazena o valor digitado pelo usuario
@@ -31,14 +26,6 @@ int validateInt(const char *prompt){
     return valueInput;
 }
 
-/**
- * @brief Lê e faz a validação de strings da entrada de usuario
- * @param prompt uma string constante com a mensagem do usuario
- * @param destination local onde a string será armazenada
- * @param maxLenght tamanho maximo que a string pode ter
- * @return - `0` erro na leitura (EOF, erro do sistema, etc)
- * @return - `1` string válida lida com sucesso
- */
 int validateString(const char *prompt, char *destination, int maxLenght){
     // Buffer muito pequeno (precisa de espaço para pelo menos 1 char + '\0')
     if(maxLenght < 2) return 0;
@@ -96,3 +83,15 @@ int validateString(const char *prompt, char *destination, int maxLenght){
         }
     }
 }
+
+/*
+char generateCorrectOption(){
+    //ASCII Code: A-65, B-66, C-67, D-68
+
+    srand(time(NULL)); //gera um novo numero
+
+    int num = rand()%(68-65+1)+65;
+    char opt = (char)num;
+
+    return opt;
+}*/
