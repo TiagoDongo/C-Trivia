@@ -1,6 +1,8 @@
 #include"quiz.h"
 #include"util.h"
 
+//========================= SYSTEM FUNCTIONS ========================================
+
 void menu(){
     int option;
     do
@@ -16,6 +18,10 @@ void menu(){
         option = validateInt("Digite a tua opcao: ");
 
         switch (option){
+            case 0:
+                printf("Saindo...\n");
+                break;
+
             case 1:
                 break;
 
@@ -33,10 +39,6 @@ void menu(){
 
             case 6:
                 break;
-
-            case 0:
-                printf("Saindo...\n");
-                break;
         
             default:
                 printf("ERRO: opcao invalida!\n");
@@ -45,6 +47,83 @@ void menu(){
     } while (option != 0);
     
 }
+
+//========================= PLAYER FUNCTIONS ========================================
+
+Player* createPlayerTreeNode(){
+    Player* node = (Player*)malloc(sizeof(Player));
+    if(node == NULL){
+        printf("Erro ao alocar memoria!\n");
+        exit(EXIT_FAILURE);
+    }
+
+    strcpy(node->playerName,"\0");
+    node->score = 0;
+    node->left = NULL;
+    node->right = NULL;
+
+    return node;
+}
+
+void addPlayerIntoTree(Player** tree,char playerName[100],int score){
+    Player* node = createPlayerTreeNode();
+
+    strcpy(node->playerName,playerName);
+    node->score = score;
+
+    if(*tree == NULL){
+        *tree = node;
+        return;
+    }
+
+    Player* current = *tree;
+    Player* father = NULL;
+
+    while(current != NULL){
+        father = current;
+        if(strcmp(node->playerName,current->playerName) < 0){
+            current = current->left;
+        }else{
+            current = current->right;
+        }
+    }
+
+    if(strcmp(father->playerName,playerName) < 0){
+        father->right = node;
+    }else{
+        father->left = node;
+    }
+}
+
+int removePlayerFromTree(Player** tree,char* playerName){
+    Player* current = *tree;
+    Player* father = NULL;
+
+    while(current != NULL && (strcmp(current->playerName,playerName)<0)){
+        father = current;
+
+        if(strcmp(current->playerName,playerName)<0){
+            current->right;
+        }else{
+            current->left;
+        }
+
+        if(current = NULL){
+            return 0;
+        }
+
+        //Caso 1:Folha
+
+        //Caso 2: Filho
+
+        //Caso 3: Filhos
+
+    }
+
+    return 1;
+}
+
+//========================= QUESTION FUNCTIONS ========================================
 
 void createQuestionList(QuestionList *qlist){
     *qlist = NULL;

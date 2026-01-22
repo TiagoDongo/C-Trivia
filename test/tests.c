@@ -263,5 +263,6 @@ int main(){
     testSaveLoadQuestionList();
 
     printf("\n=== FIM DOS TESTES DO QUIZ ===\n");
+
     return 0;
 }
