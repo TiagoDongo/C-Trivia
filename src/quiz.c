@@ -3,7 +3,7 @@
 
 //========================= SYSTEM FUNCTIONS ========================================
 
-void menu(){
+void menu(QuestionList *qList, PlayerTree **pTree){
     int option;
     do
     {
@@ -18,29 +18,44 @@ void menu(){
         option = validateInt("Digite a tua opcao: ");
 
         switch (option){
-            case 0:
+            case 0://completo
                 printf("Saindo...\n");
                 break;
 
-            case 1:
+            case 1://completo
+                playGame(*qList,pTree);
                 break;
 
             case 2:
                 break;
 
-            case 3:
+            case 3:{//completo
+                if(emptyQuestionList(*qList)){
+                    printf("ERRO: lista de perguntas vazia!\n");
+                    break;
+                }
+                showAllQuestions(*qList);
+                int position = validateInt("Digite o numero da questão a eliminar: ");
+                if(removeQuestionByPosition(qList,position)){
+                    printf("SUCESSO: Pergunta eliminada\n");
+                } else {
+                    printf("ERRO: Pergunta não encontrada/ou falha ao tentar eliminar a pergunta\n");
+                }
+                break;
+            }
+
+            case 4://completo
+                showAllQuestions(*qList);
                 break;
 
-            case 4:
-                break;
-
-            case 5:
+            case 5://completo
+                displayScoreboard(*pTree);
                 break;
 
             case 6:
                 break;
         
-            default:
+            default://completo
                 printf("ERRO: opcao invalida!\n");
                 break;
         }
@@ -48,16 +63,80 @@ void menu(){
     
 }
 
+void playGame(QuestionList qList, PlayerTree **pTree){
+    if(emptyQuestionList(qList)){
+        printf("ERRO: lista de perguntas vazia");
+        return;
+    }
+    char playerName[100];
+    int score = 0, totalQuestions = 0, questionNunber;
+    char playerAnswer;
+    QuestionList currentQ = qList;
+
+    if(!validateString("\nDigite o seu nome: ", playerName, 100)){
+        printf("ERRO: falha ao registar nome.\n");        
+        return;
+    }
+
+    printf("SUCESSO: nome registado.\n\n");
+
+    while (currentQ != NULL){
+        totalQuestions++;
+        currentQ = currentQ->next;
+    }
+
+    printf("\n--Bem-Vindo %s! Voce tera %d questoes para responder.\n\n",playerName,totalQuestions);
+    currentQ = qList;
+
+    while (currentQ != NULL){
+        printf("\n---Questao %d de %d ---\n",questionNunber,totalQuestions);
+        printf("%s\n",currentQ->question);
+
+        for (int i = 0; i < 4; i++){
+            printf("[%c] - %s\n",'A'+i,currentQ->options[i]);
+        }
+        
+        playerAnswer = validateChar("Digite a sua resposta (A-D): ");
+
+        if(playerAnswer == currentQ->correctAnswer){
+            printf("CORRETO\n");
+            score++;
+        }else{
+            printf("ERRADO! A resposta correta era: %c\n", currentQ->correctAnswer);
+        }
+        
+        currentQ = currentQ->next;
+        questionNunber++;
+
+    }
+
+    printf("\n------- RESULTADO FINAL -------\n");
+    printf("Jogador: %s\n",playerName);
+    printf("Score: %d de %d (%d%%)\n",score,totalQuestions, (score*100)/totalQuestions);
+    printf("-------------------------------\n\n");
+    
+    addPlayerIntoTree(pTree,playerName,score);
+    printf("Guardando dados do jogador.....\n");
+
+}
+
 //========================= PLAYER FUNCTIONS ========================================
 
-Player* createPlayerTreeNode(){
-    Player* node = (Player*)malloc(sizeof(Player));
+PlayerTree* createPlayerTreeNode(){
+    PlayerTree* node = (PlayerTree*)malloc(sizeof(PlayerTree));
     if(node == NULL){
         printf("Erro ao alocar memoria!\n");
         exit(EXIT_FAILURE);
     }
 
-    strcpy(node->playerName,"\0");
+    node->playerName = malloc(100 * sizeof(char));
+    if(node->playerName == NULL){
+        printf("Erro ao alocar memoria para nome!\n");
+        free(node);
+        exit(EXIT_FAILURE);
+    }
+
+    node->playerName[0] = '\0';
     node->score = 0;
     node->left = NULL;
     node->right = NULL;
@@ -65,9 +144,8 @@ Player* createPlayerTreeNode(){
     return node;
 }
 
-void addPlayerIntoTree(Player** tree,char playerName[100],int score){
-    Player* node = createPlayerTreeNode();
-
+void addPlayerIntoTree(PlayerTree** tree,char playerName[],int score){
+    PlayerTree* node = createPlayerTreeNode();
     strcpy(node->playerName,playerName);
     node->score = score;
 
@@ -76,8 +154,8 @@ void addPlayerIntoTree(Player** tree,char playerName[100],int score){
         return;
     }
 
-    Player* current = *tree;
-    Player* father = NULL;
+    PlayerTree* current = *tree;
+    PlayerTree* father = NULL;
 
     while(current != NULL){
         father = current;
@@ -95,32 +173,89 @@ void addPlayerIntoTree(Player** tree,char playerName[100],int score){
     }
 }
 
-int removePlayerFromTree(Player** tree,char* playerName){
-    Player* current = *tree;
-    Player* father = NULL;
-
-    while(current != NULL && (strcmp(current->playerName,playerName)<0)){
-        father = current;
-
-        if(strcmp(current->playerName,playerName)<0){
-            current->right;
-        }else{
-            current->left;
-        }
-
-        if(current = NULL){
-            return 0;
-        }
-
-        //Caso 1:Folha
-
-        //Caso 2: Filho
-
-        //Caso 3: Filhos
-
+void displayScoreboard(PlayerTree* tree){
+    if(tree == NULL){
+        printf("ERRO: lista de jogadores vazia.\n");
+        return;
     }
 
-    return 1;
+    printf("\n========== CLASSIFICACAO ==========\n");
+    printf("%-30s | %s\n", "Nome", "Pontuacao");
+    printf("----------------------------------\n");
+    displayScoreboardInOrder(tree);
+    printf("===================================\n\n");
+}
+
+void displayScoreboardInOrder(PlayerTree* tree){
+    if(tree == NULL) return;
+
+    // InOrder: esquerda, nó, direita (ordem alfabética)
+    displayScoreboardInOrder(tree->left);
+    printf("%-30s | %d\n", tree->playerName, tree->score);
+    displayScoreboardInOrder(tree->right);
+}
+
+void freePlayerTree(PlayerTree** tree){
+    if(*tree == NULL) return;
+
+    freePlayerTree(&(*tree)->left);
+    freePlayerTree(&(*tree)->right);
+
+    free((*tree)->playerName);
+    free(*tree);
+    *tree = NULL;
+}
+
+
+int removePlayerFromTree(PlayerTree** tree, char* playerName){
+    if(*tree == NULL) return 0;
+
+    int cmp = strcmp(playerName, (*tree)->playerName);
+
+    if(cmp < 0){
+        return removePlayerFromTree(&(*tree)->left, playerName);
+    } else if(cmp > 0){
+        return removePlayerFromTree(&(*tree)->right, playerName);
+    } else {
+        // Encontrou o nó
+        PlayerTree* temp = *tree;
+
+        // Caso 1: Folha (sem filhos)
+        if(temp->left == NULL && temp->right == NULL){
+            free(temp->playerName);
+            free(temp);
+            *tree = NULL;
+            return 1;
+        }
+
+        // Caso 2: Tem apenas filho direito
+        if(temp->left == NULL){
+            *tree = temp->right;
+            free(temp->playerName);
+            free(temp);
+            return 1;
+        }
+
+        // Caso 2: Tem apenas filho esquerdo
+        if(temp->right == NULL){
+            *tree = temp->left;
+            free(temp->playerName);
+            free(temp);
+            return 1;
+        }
+
+        // Caso 3: Tem dois filhos
+        // Encontra o menor nó da subárvore direita (sucessor inorder)
+        PlayerTree* minRight = temp->right;
+        while(minRight->left != NULL){
+            minRight = minRight->left;
+        }
+
+        strcpy(temp->playerName, minRight->playerName);
+        temp->score = minRight->score;
+
+        return removePlayerFromTree(&temp->right, minRight->playerName);
+    }
 }
 
 //========================= QUESTION FUNCTIONS ========================================

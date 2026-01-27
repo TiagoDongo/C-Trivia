@@ -95,3 +95,49 @@ char generateCorrectOption(){
 
     return opt;
 }*/
+
+char validateChar(const char *prompt){
+    char buffer[10];
+    char character;
+    
+    while(1){
+        printf("%s", prompt);
+        
+        if(fgets(buffer, sizeof(buffer), stdin) == NULL){
+            if(!feof(stdin)){
+                int c;
+                while((c = getchar()) != '\n' && c != EOF);
+            }
+            printf("ERRO: entrada invalida. Tente novamente.\n");
+            continue;
+        }
+        
+        // Remove newline se existir
+        int len = (int)strlen(buffer);
+        if(len > 0 && buffer[len - 1] == '\n'){
+            buffer[len - 1] = '\0';
+            len--;
+        }
+        // Se não tinha newline, limpa o buffer
+        else if(len == sizeof(buffer) - 1){
+            int c;
+            while((c = getchar()) != '\n' && c != EOF);
+        }
+        
+        // Valida se tem exatamente 1 caractere não-espaço
+        if(len != 1 || isspace((unsigned char)buffer[0])){
+            printf("ERRO: digite exatamente um caractere. Tente novamente.\n");
+            continue;
+        }
+        
+        character = toupper(buffer[0]);
+        
+        // Valida se é A, B, C ou D
+        if(character < 'A' || character > 'D'){
+            printf("ERRO: resposta invalida! Digite A, B, C ou D.\n");
+            continue;
+        }
+        
+        return character;
+    }
+}

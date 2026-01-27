@@ -29,15 +29,14 @@
  * @param *right ponteiro para o nó filho direito
  */
 typedef struct player {
-    char playerName[100];      
+    char *playerName;      
     int score;                 
     struct player *left;       
     struct player *right;      
-} Player;
+} PlayerTree;
 
 /**
  * @brief estrututa de dados responsavel por armazenar uma lista de perguntas
- 
  * @param *question ponteiro do tipo char que armazera a pergunta
  * @param *option array de string que armazera a `4 opções` de resposta 
  * @param correctAnswer caracter que armazera a resposta correta
@@ -60,21 +59,34 @@ typedef QuestionNode *QuestionList;
 
 /**
  * @brief Função que imprime o menu principal do sistema
+ * 
+ * Apresenta um menu com 7 opções (0-6) e processa a escolha do utilizador
+ * em loop até que escolha sair (opção 0).
+ * @param qList Ponteiro para a lista de questões (será passada às funções)
+ * @param pTree Ponteiro duplo para a árvore de jogadores (para adicionar/consultar)
+ * @return Void. Executa até o utilizador escolher sair (opção 0)
  */
-void menu();
+void menu(QuestionList *qList, PlayerTree **pTree);
+
+/**
+ * @brief Executa um quiz completo com um jogador
+ * @param qList Lista de questões a serem apresentadas
+ * @param pTree Ponteiro duplo para a árvore de jogadores (para guardar resultado)
+ * @return Void. A pontuação é guardada na árvore de jogadores
+ */
+void playGame(QuestionList qList, PlayerTree **pTree);
 
 //========================= FUNÇÕES DE MANIPULAÇÃO DE PLAYERS ======================================
 
 /**
- * @brief Cria e inicializa um novo nó para a árvore de jogadores
+ * @brief Cria e inicializa um novo nó para a árvore de jogadores 
  * 
  * Aloca dinamicamente memória para uma estrutura Player e inicializa
- * todos os seus campos com valores padrão. Este nó pode ser usado como
- * raiz da árvore ou como nó intermediário.
- * 
- * @returns Ponteiro para o novo nó Player inicializado 
+ * todos os seus campos com valores padrão. 
+ * @returns `Ponteiro` para o novo nó Player inicializado\\
+ * @returns `NULL` se falhar na alocação  da memoria 
  */
-Player* createPlayerTreeNode();
+PlayerTree* createPlayerTreeNode();
 
 /**
  * @brief Adiciona um novo jogador à árvore binária de pesquisa ordenada por nome
@@ -85,18 +97,47 @@ Player* createPlayerTreeNode();
  * @param tree Ponteiro duplo para a raiz da árvore. 
  * @param playerName Nome do jogador (máx. 99 caracteres + terminador nulo).
  * @param score Pontuação inicial do jogador (inteiro, típico: 0-100).
- * 
- * @note Complexidade: O(log n) em árvore balanceada, O(n) no pior caso
- * @warning A função não previne nomes duplicados na árvore
  */
-void addPlayerIntoTree(Player** tree,char playerName[100], int score); 
+void addPlayerIntoTree(PlayerTree** tree,char playerName[], int score); 
 
 /**
  * @brief Remove o no que contem informacoes do jogador na arvore
+ * 
  * @param tree Ponteiro duplo para a raiz da árvore. 
  * @param playerName Nome do jogador (máx. 99 caracteres + terminador nulo).
+ * 
+ * @return `1` - se o jogador foi encontrado e removido com sucesso.\\
+ * @return `0` - se o jogador não foi encontrado ou árvore está vazia.
  */
-int removePlayerFromTree(Player** tree,char* playerName); 
+int removePlayerFromTree(PlayerTree** tree,char* playerName); 
+
+/**
+ * @brief Mostra a classificação dos jogadores em ordem alfabética  
+ * @param tree Raiz da árvore de jogadores
+ * @return `Void` - Imprime a tabela no stdout
+ */
+void displayScoreboard(PlayerTree* tree);
+
+/**
+ * @brief Função auxiliar para mostrar scoreboard em inorder
+ */
+void displayScoreboardInOrder(PlayerTree* tree);
+
+/**
+ * @brief Liberta toda a memória da árvore de jogadores
+  * Percorre recursivamente toda a árvore (pós-ordem) e liberta
+ * a memória de cada nó e seu respectivo nome.
+ * 
+ * Processo (pós-ordem):
+ * 1. Liberta subárvore esquerda
+ * 2. Liberta subárvore direita
+ * 3. Liberta o nó atual
+ * 
+ * @param tree Ponteiro duplo para a raiz da árvore
+ * 
+ * @return `Void` - Define o ponteiro como NULL após libertar
+ */
+void freePlayerTree(PlayerTree** tree);
 
 //========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
 
