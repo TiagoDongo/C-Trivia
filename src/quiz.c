@@ -26,8 +26,38 @@ void menu(QuestionList *qList, PlayerTree **pTree){
                 playGame(*qList,pTree);
                 break;
 
-            case 2:
+            case 2:{
+                char question[256];
+                char qOptions[4][70];
+                char *optPtrs[4];      
+                char answer;
+
+                if(!validateString("Digite a pergunta: ", question, 256)){
+                    printf("ERRO: falha ao ler a string.\n");
+                    break;
+                }
+
+                for (int i = 0; i < 4; i++){
+                    if(!validateString("Digite uma opcao: ", qOptions[i], 70)){
+                        printf("ERRO: falha ao ler a opcao %c.\n", 'A'+i);
+                        break;
+                    }
+                    optPtrs[i] = qOptions[i];
+                }
+
+                answer = validateChar("Digite a resposta correta (A-D): ");
+
+                QuestionNode *q = createQuestion(question, optPtrs, answer);
+                if(q == NULL){
+                    printf("ERRO: falha ao criar pergunta.\n");
+                    break;
+                }
+
+                addNewQuestion(qList,q);
+                printf("SUCESSO: Pergunta adicionada.\n");
+
                 break;
+            }
 
             case 3:{//completo
                 if(emptyQuestionList(*qList)){
@@ -36,6 +66,7 @@ void menu(QuestionList *qList, PlayerTree **pTree){
                 }
                 showAllQuestions(*qList);
                 int position = validateInt("Digite o numero da questão a eliminar: ");
+
                 if(removeQuestionByPosition(qList,position)){
                     printf("SUCESSO: Pergunta eliminada\n");
                 } else {
@@ -53,6 +84,7 @@ void menu(QuestionList *qList, PlayerTree **pTree){
                 break;
 
             case 6:
+                printf("ERRO: esta opcao ainda não foi implementada\n");
                 break;
         
             default://completo
@@ -69,7 +101,7 @@ void playGame(QuestionList qList, PlayerTree **pTree){
         return;
     }
     char playerName[100];
-    int score = 0, totalQuestions = 0, questionNunber;
+    int score = 0, totalQuestions = 0, questionNunber = 1;
     char playerAnswer;
     QuestionList currentQ = qList;
 
@@ -274,10 +306,24 @@ QuestionNode *createQuestion(char *question, char *options[4], char correctAnswe
         return NULL;
     }
 
-    newNode->question = question;
+    newNode->question = malloc(strlen(question)+1);
+    if(newNode->question == NULL){
+        free(newNode);
+        return NULL;
+    }
+    strcpy(newNode->question, question);
 
-    for (int i = 0; i < 4; i++){
-        newNode->options[i] = options[i];
+    for(int i = 0; i < 4; i++){
+        newNode->options[i] = malloc(strlen(options[i]) + 1);
+        if(newNode->options[i] == NULL){
+            for(int j = 0; j < i; j++){
+                free(newNode->options[j]);
+            }
+            free(newNode->question);
+            free(newNode);
+            return NULL;
+        }
+        strcpy(newNode->options[i], options[i]);
     }
     
     newNode->correctAnswer = correctAnswer;
@@ -306,42 +352,42 @@ void addNewQuestion(QuestionList *qList, QuestionNode *question){
     question->next = NULL;
 }
 
-int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove){
+// int removeQuestion(QuestionList *qList, QuestionNode *questionToRemove){
     
-    //Verifica se a lista está vazia (aponta para NULL)
-    if(emptyQuestionList(*qList)){
-        return 0;  // Lista vazia, não há o que remover
-    }
+//     //Verifica se a lista está vazia (aponta para NULL)
+//     if(emptyQuestionList(*qList)){
+//         return 0;  // Lista vazia, não há o que remover
+//     }
     
-    // 3. Verifica se o nó a ser removido é NULL
-    if(questionToRemove == NULL) {
-        return 0; // Nó inválido, não faz nada
-    }
+//     // 3. Verifica se o nó a ser removido é NULL
+//     if(questionToRemove == NULL) {
+//         return 0; // Nó inválido, não faz nada
+//     }
     
-    QuestionList q = *qList;
+//     QuestionList *q = *qList;
 
-    //caso o nó a ser  removido for o primeiro
-    if(q == questionToRemove) { 
-        *qList = q->next;
-        free(q);
-        return 1;
-    }
+//     //caso o nó a ser  removido for o primeiro
+//     if(q == questionToRemove) { 
+//         *qList = q->next;
+//         free(q);
+//         return 1;
+//     }
 
-    //busca o nó no  resto dalista
-    while(q->next  != NULL && q->next != questionToRemove){
-        q = q->next;
-    }
+//     //busca o nó no  resto dalista
+//     while(q->next  != NULL && q->next != questionToRemove){
+//         q = q->next;
+//     }
 
-    //caso se encontrar  o nó
-    if(q->next == questionToRemove) {
-        QuestionNode *qToRemove  = q->next;
-        q->next = qToRemove->next;
-        free(qToRemove);
-        return 1;
-    }else{
-        return 0;
-    }
-}
+//     //caso se encontrar  o nó
+//     if(q->next == questionToRemove) {
+//         QuestionNode *qToRemove  = q->next;
+//         q->next = qToRemove->next;
+//         free(qToRemove);
+//         return 1;
+//     }else{
+//         return 0;
+//     }
+// }
 
 void showAllQuestions(QuestionList list){
     if(emptyQuestionList(list)){
@@ -382,6 +428,8 @@ void freeQuestionList(QuestionList *list) {
 
 int removeQuestionByPosition(QuestionList *list, int questionPosition){
     if(emptyQuestionList(*list))  return 0;
+
+    if(questionPosition < 1) return 0;
 
     QuestionList ql = *list;
     int n = 1;
@@ -467,8 +515,7 @@ void loadQuestionList(QuestionList *qlist){
 
     char *opt[4];
     for (int i = 0; i < 4; i++){
-      opt[i] = malloc(strlen(qOptions[i]) + 1);
-      strcpy(opt[i], qOptions[i]);
+      opt[i] = qOptions[i];
     }
 
     QuestionNode *q = createQuestion(questionCpy,  opt, qAnswer);
