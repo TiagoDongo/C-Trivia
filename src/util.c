@@ -141,3 +141,13 @@ char validateChar(const char *prompt){
         return character;
     }
 }
+
+int auth_admin(){
+    char pass[20];
+    printf("\nPassword: ");
+    fgets(pass,6,stdin);
+    getchar();
+    if (strcmp(pass, "Admin") == 0) return 1;
+    printf("Acesso negado\n");
+    return 0;
+}

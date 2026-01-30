@@ -25,6 +25,8 @@ int validateString(const char *prompt, char *destination, int maxLenght);
 
 char validateChar(const char *prompt);
 
-char generateCorrectOption();
+//char generateCorrectOption();
+
+int auth_admin();
 
 #endif
