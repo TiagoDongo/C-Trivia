@@ -18,6 +18,7 @@
 #include<ctype.h>
 #include<locale.h>
 
+
 //========================= ESTRUTURAS DE DADOS ========================================
 
 /**
@@ -138,6 +139,12 @@ void displayScoreboardInOrder(PlayerTree* tree);
  * @return `Void` - Define o ponteiro como NULL após libertar
  */
 void freePlayerTree(PlayerTree** tree);
+
+/** 
+  * @brief Função que procura um jogador pelo seu nome e exibe a sua pontuação
+Faz o percurso em pre-ordem pelos nós da árvore ate encontrar o no procurado
+*/
+void searchPlayer(PlayerTree* tree,char* playerName);
 
 //========================= FUNÇÕES DE MANIPULAÇÃO DO QUIZ ========================================
 

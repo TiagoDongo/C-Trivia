@@ -5,6 +5,7 @@
 
 void menu(QuestionList *qList, PlayerTree **pTree){
     int option;
+    char usuario[100];
     do
     {
         printf("\n----- QUIZ GAME -----\n");
@@ -26,66 +27,80 @@ void menu(QuestionList *qList, PlayerTree **pTree){
                 playGame(*qList,pTree);
                 break;
 
-            case 2:{
-                char question[256];
-                char qOptions[4][70];
-                char *optPtrs[4];      
-                char answer;
+            case 2: case 3: case 4: case 5: case 6: {
+                if(!auth_admin()) break;
 
-                if(!validateString("Digite a pergunta: ", question, 256)){
-                    printf("ERRO: falha ao ler a string.\n");
-                    break;
-                }
-
-                for (int i = 0; i < 4; i++){
-                    if(!validateString("Digite uma opcao: ", qOptions[i], 70)){
-                        printf("ERRO: falha ao ler a opcao %c.\n", 'A'+i);
+                if(option == 2){
+                    char question[256];
+                    char qOptions[4][70];
+                    char *optPtrs[4];      
+                    char answer;
+    
+                    if(!validateString("Digite a pergunta: ", question, 256)){
+                        printf("ERRO: falha ao ler a string.\n");
                         break;
                     }
-                    optPtrs[i] = qOptions[i];
+    
+                    for (int i = 0; i < 4; i++){
+                        if(!validateString("Digite uma opcao: ", qOptions[i], 70)){
+                            printf("ERRO: falha ao ler a opcao %c.\n", 'A'+i);
+                            break;
+                        }
+                        optPtrs[i] = qOptions[i];
+                    }
+    
+                    answer = validateChar("Digite a resposta correta (A-D): ");
+    
+                    QuestionNode *q = createQuestion(question, optPtrs, answer);
+                    if(q == NULL){
+                        printf("ERRO: falha ao criar pergunta.\n");
+                        break;
+                    }
+    
+                    addNewQuestion(qList,q);
+                    printf("SUCESSO: Pergunta adicionada.\n");
+    
+                    break;
                 }
-
-                answer = validateChar("Digite a resposta correta (A-D): ");
-
-                QuestionNode *q = createQuestion(question, optPtrs, answer);
-                if(q == NULL){
-                    printf("ERRO: falha ao criar pergunta.\n");
+    
+                if(option == 3){//completo
+                    if(emptyQuestionList(*qList)){
+                        printf("ERRO: lista de perguntas vazia!\n");
+                        break;
+                    }
+                    showAllQuestions(*qList);
+                    int position = validateInt("Digite o numero da questão a eliminar: ");
+    
+                    if(removeQuestionByPosition(qList,position)){
+                        printf("SUCESSO: Pergunta eliminada\n");
+                    } else {
+                        printf("ERRO: Pergunta não encontrada/ou falha ao tentar eliminar a pergunta\n");
+                    }
+                    break;
+                }
+    
+                if(option == 4){//completo
+                    showAllQuestions(*qList);
+                    break;
+                }
+    
+                if(option == 5){//completo
+                    displayScoreboard(*pTree);
+                    break;
+                }
+    
+                if(option == 6){
+                    printf("Digite o nome do jogador a procura: ");
+                    if(!validateString("Digite uma opcao: ", usuario, 100)){
+                        printf("ERRO: falha ao ler usuario");
+                        break;
+                    }
+                    searchPlayer(*pTree, usuario);
                     break;
                 }
 
-                addNewQuestion(qList,q);
-                printf("SUCESSO: Pergunta adicionada.\n");
-
-                break;
             }
 
-            case 3:{//completo
-                if(emptyQuestionList(*qList)){
-                    printf("ERRO: lista de perguntas vazia!\n");
-                    break;
-                }
-                showAllQuestions(*qList);
-                int position = validateInt("Digite o numero da questão a eliminar: ");
-
-                if(removeQuestionByPosition(qList,position)){
-                    printf("SUCESSO: Pergunta eliminada\n");
-                } else {
-                    printf("ERRO: Pergunta não encontrada/ou falha ao tentar eliminar a pergunta\n");
-                }
-                break;
-            }
-
-            case 4://completo
-                showAllQuestions(*qList);
-                break;
-
-            case 5://completo
-                displayScoreboard(*pTree);
-                break;
-
-            case 6:
-                printf("ERRO: esta opcao ainda não foi implementada\n");
-                break;
         
             default://completo
                 printf("ERRO: opcao invalida!\n");
@@ -288,6 +303,19 @@ int removePlayerFromTree(PlayerTree** tree, char* playerName){
 
         return removePlayerFromTree(&temp->right, minRight->playerName);
     }
+}
+
+void searchPlayer(PlayerTree* tree,char* playerName){
+    if(tree == NULL){
+        return;
+    }
+
+    if(strcmp(tree->playerName,playerName) == 0){
+        printf("Nome: %s\n",tree->playerName);
+        printf("Pontuacao: %d\n",tree->score);
+    }
+    searchPlayer(tree->left,playerName);
+    searchPlayer(tree->right,playerName);
 }
 
 //========================= QUESTION FUNCTIONS ========================================
