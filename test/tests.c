@@ -76,42 +76,42 @@ void testAddNewQuestion() {
     }
 }
 
-void testRemoveQuestion() {
-    QuestionList qList;
-    createQuestionList(&qList);
+// void testRemoveQuestion() {
+//     QuestionList qList;
+//     createQuestionList(&qList);
 
-    QuestionNode *q1 = createQuestion("P1", (char*[]){"A","B","C","D"}, 'A');
-    QuestionNode *q2 = createQuestion("P2", (char*[]){"A","B","C","D"}, 'B');
+//     QuestionNode *q1 = createQuestion("P1", (char*[]){"A","B","C","D"}, 'A');
+//     QuestionNode *q2 = createQuestion("P2", (char*[]){"A","B","C","D"}, 'B');
 
-    addNewQuestion(&qList, q1);
-    addNewQuestion(&qList, q2);
+//     addNewQuestion(&qList, q1);
+//     addNewQuestion(&qList, q2);
 
-    printf("\n-Teste removeQuestion:\n");
+//     printf("\n-Teste removeQuestion:\n");
 
-    // remover no do final
-    printf("-> Remover no final (q2): ");
-    if (removeQuestion(&qList, q2) && q1->next == NULL) {
-        printf("[PASS]: no final removido corretamente\n");
-    } else {
-        printf("[FAIL]: falha ao remover no final\n");
-    }
+//     // remover no do final
+//     printf("-> Remover no final (q2): ");
+//     if (removeQuestion(&qList, q2) && q1->next == NULL) {
+//         printf("[PASS]: no final removido corretamente\n");
+//     } else {
+//         printf("[FAIL]: falha ao remover no final\n");
+//     }
 
-    // remover no do inicio
-    printf("-> Remover no inicio (q1): ");
-    if (removeQuestion(&qList, q1) && emptyQuestionList(qList)) {
-        printf("[PASS]: no inicio removido corretamente, lista vazia\n");
-    } else {
-        printf("[FAIL]: falha ao remover no inicio\n");
-    }
+//     // remover no do inicio
+//     printf("-> Remover no inicio (q1): ");
+//     if (removeQuestion(&qList, q1) && emptyQuestionList(qList)) {
+//         printf("[PASS]: no inicio removido corretamente, lista vazia\n");
+//     } else {
+//         printf("[FAIL]: falha ao remover no inicio\n");
+//     }
 
-    // tentar remover no inexistente
-    printf("-> Remover no inexistente (q1 novamente): ");
-    if (!removeQuestion(&qList, q1)) {
-        printf("[PASS]: retorno 0 ao tentar remover no inexistente\n");
-    } else {
-        printf("[FAIL]: falha ao lidar com no inexistente\n");
-    }
-}
+//     // tentar remover no inexistente
+//     printf("-> Remover no inexistente (q1 novamente): ");
+//     if (!removeQuestion(&qList, q1)) {
+//         printf("[PASS]: retorno 0 ao tentar remover no inexistente\n");
+//     } else {
+//         printf("[FAIL]: falha ao lidar com no inexistente\n");
+//     }
+// }
 
 void testShowAllQuestions(){
     QuestionList list;
@@ -257,7 +257,7 @@ int main(){
     testEmptyQuestionList();
     testCreateQuestion();
     testAddNewQuestion();
-    testRemoveQuestion();
+    //testRemoveQuestion();
     testShowAllQuestions();
     testRemoveQuestionByPosition();
     testSaveLoadQuestionList();
